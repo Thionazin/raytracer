@@ -8,7 +8,7 @@
 class Plane : public SceneOBJ {
 	public:
 		Plane(glm::vec3 po, glm::vec3 nor) : point(po), normal(nor) {};
-		void intersection(Ray& input_ray, double& distance, glm::vec3& hit_point, glm::vec3& hit_normal);
+		vector<Hit> intersection(Ray& input_ray);
 	private:
 		glm::vec3 point;
 		glm::vec3 normal;
