@@ -11,6 +11,10 @@
 #include "tiny_obj_loader.h"
 
 #include "image/Image.h"
+#include "matrix_stack/MatrixStack.h"
+#include "camera/Camera.h"
+#include "ray/Ray.h"
+#include "scene_object/SceneOBJ.h"
 
 // This allows you to skip the `std::` in front of C++ standard library
 // functions. You can also say `using std::cout` to be more selective.
@@ -25,6 +29,12 @@ int main(int argc, char **argv)
 	int scene_size = -1;
 	string output_file = "";
 
+	
+	// Storage of scene objects
+	vector<shared_ptr<SceneOBJ>> objs;
+
+	// Stores generated rays
+	vector<shared_ptr<Ray>> rays;
 
 
 	// Checks if number of arguments is valid
@@ -56,8 +66,13 @@ int main(int argc, char **argv)
 
 
 
-	//initialize image object
+	// initialize image object
 	Image image(scene_size, scene_size);
+
+	// initialize camera and populate rays
+	
+
+	// initialize scene objects and populate objs
 
 
 	/*
