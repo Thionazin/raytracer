@@ -3,7 +3,10 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-#include "../ray/Ray.h"
+struct Ray {
+	glm::vec3 origin;
+	glm::vec3 direction;
+};
 
 struct Hit {
 	double distance;
