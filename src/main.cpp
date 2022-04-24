@@ -142,6 +142,7 @@ int main(int argc, char **argv)
 
 
 	// draw scene with camera
+	cam.drawScene(scene, output_file);
 
 
 	return 0;

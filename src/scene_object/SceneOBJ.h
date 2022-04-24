@@ -1,9 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+
+#include "../matrix_stack/MatrixStack.h"
 
 struct Ray {
 	glm::vec3 origin;
@@ -22,6 +25,7 @@ class SceneOBJ {
 		SceneOBJ() {};
 		virtual ~SceneOBJ() {};
 		virtual std::vector<Hit> intersection(Ray& input_ray);
+		virtual void convertCoords(std::shared_ptr<MatrixStack>& MV) {};
 		virtual double getRad() { return -100.0; };
 	private:
 		glm::vec3 center;

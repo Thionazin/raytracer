@@ -21,6 +21,7 @@ class Sphere : public SceneOBJ {
 		};
 		~Sphere() {};
 		std::vector<Hit> intersection(Ray& input_ray);
+		void convertCoords(std::shared_ptr<MatrixStack>& MV);
 		double getRad() { return radius; }
 	private:
 		glm::vec3 center;

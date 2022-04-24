@@ -57,6 +57,24 @@ void Camera::applyViewMatrix(std::shared_ptr<MatrixStack> MV) const
 void Camera::drawScene(Scene& scene, std::string output_name) {
 	Image image(width, height);
 
+	// Convert coords of all items to camera space
+	std::shared_ptr<MatrixStack> MV = std::make_shared<MatrixStack>();
+	MV->pushMatrix();
+	applyViewMatrix(MV);
+	for(unsigned int i = 0; i < scene.objs.size(); i++) {
+		MV->pushMatrix();
+		scene.objs[i]->convertCoords(MV);
+		MV->popMatrix();
+	}
+	MV->popMatrix();
+
+
+	// draw
+	for(int r = 0; r < height; r++) {
+		for(int c = 0; c < width; c++) {
+			image.setPixel(r, c, 255, 0, 0);
+		}
+	}
 
 	image.writeToFile(output_name);
 }
