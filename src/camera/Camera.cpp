@@ -7,13 +7,13 @@
 #include "../scene/Scene.h"
 #include "../image/Image.h"
 
-Camera::Camera(int res) :
-	aspect(1.0),
-	fovy((double)(45.0*M_PI/180.0)),
-	width(res),
-	height(res),
-	position(glm::vec3(0, 0, 5)),
-	rotation(glm::vec3(0, 0, 0))
+Camera::Camera(int _width, int _height, double _fov, glm::vec3 _pos, glm::vec4 _rot) :
+	aspect(((double)_width)/((double)_height)),
+	fovy((double)(_fov*M_PI/180.0)),
+	width(_width),
+	height(_height),
+	position(_pos),
+	rotation(_rot)
 {
 	rays = std::vector<std::vector<Ray>>(height);
 	for(int r = 0; r < height; r++) {

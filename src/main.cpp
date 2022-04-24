@@ -14,11 +14,62 @@
 #include "matrix_stack/MatrixStack.h"
 #include "camera/Camera.h"
 #include "scene_object/SceneOBJ.h"
+#include "scene_object/Sphere.h"
+#include "scene/Scene.h"
 
 // This allows you to skip the `std::` in front of C++ standard library
 // functions. You can also say `using std::cout` to be more selective.
 // You should never do this in a header file.
 using namespace std;
+
+
+void generateScene(Scene& scene, int scene_no)
+{
+	switch(scene_no) {
+		case 1:
+		case 2:
+			// Red Sphere
+			{
+				glm::vec3 pos(-0.5, -1.0, 1.0);
+				glm::vec3 scale(1.0, 1.0, 1.0);
+				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
+				glm::vec3 diffuse(1.0, 0.0, 0.0);
+				glm::vec3 specular(1.0, 1.0, 0.5);
+				glm::vec3 ambient(0.1, 0.1, 0.1);
+				double exponent = 100.0;
+				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Green Sphere
+			{
+				glm::vec3 pos(0.5, -1.0, -1.0);
+				glm::vec3 scale(1.0, 1.0, 1.0);
+				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
+				glm::vec3 diffuse(0.0, 1.0, 0.0);
+				glm::vec3 specular(1.0, 1.0, 0.5);
+				glm::vec3 ambient(0.1, 0.1, 0.1);
+				double exponent = 100.0;
+				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Blue Sphere
+			{
+				glm::vec3 pos(0.0, 1.0, 0.0);
+				glm::vec3 scale(1.0, 1.0, 1.0);
+				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
+				glm::vec3 diffuse(0.0, 0.0, 1.0);
+				glm::vec3 specular(1.0, 1.0, 0.5);
+				glm::vec3 ambient(0.1, 0.1, 0.1);
+				double exponent = 100.0;
+				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+		break;
+	}
+}
 
 
 int main(int argc, char **argv)
@@ -27,6 +78,10 @@ int main(int argc, char **argv)
 	int scene_no = -1;
 	int scene_size = -1;
 	string output_file = "";
+
+	double fovy = 45.0;
+	glm::vec3 camera_pos(0.0f, 0.0f, 5.0f);
+	glm::vec4 camera_rot(0.0f, 0.0f, 0.0f, 0.0f);
 
 	
 	// Storage of scene objects
@@ -52,6 +107,16 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
+	// checks if scene 8
+	if(scene_no == 8) {
+		fovy = 60.0;
+		camera_pos.x = -3.0f;
+		camera_pos.y = 0.0f;
+		camera_pos.z = 0.0f;
+		camera_rot = glm::vec4(M_PI/2.0, 0.0f, 1.0f, 0.0f);
+
+	}
+
 	// Checks if scene width and height are valid
 	scene_size = atoi(argv[2]);
 	if(scene_size < 1) {
@@ -66,10 +131,14 @@ int main(int argc, char **argv)
 
 
 	// initialize camera and populate rays
-	Camera cam(scene_size);
+	// TODO: generate camera dependant on scene. If scene 8, camera's fovy will be different.
+	// Although aspect will never change in the scope of this assignment, I added a field for it for later editing.
+	Camera cam(scene_size, scene_size, fovy, camera_pos, camera_rot);
 	
 
 	// initialize scene objects and populate objs
+	Scene scene;
+	generateScene(scene, scene_no);
 
 
 	// draw scene with camera

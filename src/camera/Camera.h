@@ -14,7 +14,7 @@ class MatrixStack;
 class Camera
 {
 public:
-	Camera(int res);
+	Camera(int _width, int _height, double _fov, glm::vec3 _pos, glm::vec4 _rot);
 	virtual ~Camera();
 	void applyViewMatrix(std::shared_ptr<MatrixStack> MV) const;
 	void debugTestRays();
@@ -26,7 +26,7 @@ private:
 	int width;
 	int height;
 	glm::vec3 position;
-	glm::vec3 rotation;
+	glm::vec4 rotation;
 	std::vector<std::vector<Ray>> rays;
 };
 
