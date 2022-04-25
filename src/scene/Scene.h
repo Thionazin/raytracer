@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "../scene_object/SceneOBJ.h"
-#include "../light/Light.h"
 
 class Scene
 {

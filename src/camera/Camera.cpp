@@ -5,7 +5,6 @@
 #include "Camera.h"
 #include "../matrix_stack/MatrixStack.h"
 #include "../scene/Scene.h"
-#include "../image/Image.h"
 
 Camera::Camera(int _width, int _height, double _fov, glm::vec3 _pos, glm::vec4 _rot) :
 	aspect(((double)_width)/((double)_height)),
@@ -66,15 +65,44 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 		scene.objs[i]->convertCoords(MV);
 		MV->popMatrix();
 	}
+	for(unsigned int i = 0; i < scene.lights.size(); i++) {
+		scene.lights[i]->position = MV->topMatrix() * glm::vec4(scene.lights[i]->position, 1.0f);
+	}
 	MV->popMatrix();
 
 
 	// draw
 	for(int r = 0; r < height; r++) {
 		for(int c = 0; c < width; c++) {
-			image.setPixel(r, c, 255, 0, 0);
+			// assumes every scene has at least one object. Otherwise there wouldn't be any point would there
+			SceneOBJ* closest = scene.objs[0];
+			double closest_dist = DBL_MAX;
+			Hit closest_hit;
+			{
+				std::vector<Hit> hit_vec = scene.objs[0]->intersection(rays[r][c]);
+				for(size_t j = 0; j < hit_vec.size(); j++) {
+					if(hit_vec[j].distance < closest_dist) {
+						closest_dist = hit_vec[j].distance;
+						closest_hit = hit_vec[j];
+					}
+				}
+			}
+			for(unsigned int i = 1; i < scene.objs.size(); i++) {
+				std::vector<Hit> hit_vec = scene.objs[i]->intersection(rays[r][c]);
+				for(size_t j = 0; j < hit_vec.size(); j++) {
+					if(hit_vec[j].distance < closest_dist) {
+						closest = scene.objs[i];
+						closest_dist = hit_vec[j].distance;
+						closest_hit = hit_vec[j];
+					}
+				}
+			}
+			if(closest_dist != DBL_MAX) {
+				closest->doBPShading(closest_hit, image, scene.lights, scene.objs, c, height-r-1);
+			} else {
+				image.setPixel(c, height-r-1, 0, 0, 0);
+			}
 		}
 	}
-
 	image.writeToFile(output_name);
 }

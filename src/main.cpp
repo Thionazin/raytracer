@@ -30,42 +30,50 @@ void generateScene(Scene& scene, int scene_no)
 		case 2:
 			// Red Sphere
 			{
-				glm::vec3 pos(-0.5, -1.0, 1.0);
-				glm::vec3 scale(1.0, 1.0, 1.0);
-				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
-				glm::vec3 diffuse(1.0, 0.0, 0.0);
-				glm::vec3 specular(1.0, 1.0, 0.5);
-				glm::vec3 ambient(0.1, 0.1, 0.1);
+				glm::vec3 pos(-0.5f, -1.0f, 1.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
 				double exponent = 100.0;
-				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				Sphere* sph = new Sphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
 				SceneOBJ* _obj = sph;
 				scene.objs.push_back(_obj);
 			}
 			// Green Sphere
 			{
-				glm::vec3 pos(0.5, -1.0, -1.0);
-				glm::vec3 scale(1.0, 1.0, 1.0);
-				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
-				glm::vec3 diffuse(0.0, 1.0, 0.0);
-				glm::vec3 specular(1.0, 1.0, 0.5);
-				glm::vec3 ambient(0.1, 0.1, 0.1);
+				glm::vec3 pos(0.5f, -1.0f, -1.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 1.0f, 0.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
 				double exponent = 100.0;
-				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				Sphere* sph = new Sphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
 				SceneOBJ* _obj = sph;
 				scene.objs.push_back(_obj);
 			}
 			// Blue Sphere
 			{
-				glm::vec3 pos(0.0, 1.0, 0.0);
-				glm::vec3 scale(1.0, 1.0, 1.0);
-				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
-				glm::vec3 diffuse(0.0, 0.0, 1.0);
-				glm::vec3 specular(1.0, 1.0, 0.5);
-				glm::vec3 ambient(0.1, 0.1, 0.1);
+				glm::vec3 pos(0.0f, 1.0f, 0.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
 				double exponent = 100.0;
-				Sphere* sph = new Sphere(pos, 1.0, scale, rotation, ambient, diffuse, specular, exponent);
+				Sphere* sph = new Sphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
 				SceneOBJ* _obj = sph;
 				scene.objs.push_back(_obj);
+			}
+			// Singular light
+			{
+				glm::vec3 pos(-2.0f, 1.0f, 1.0f);
+				float col = 1.0f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+
 			}
 		break;
 	}
@@ -89,6 +97,31 @@ int main(int argc, char **argv)
 
 	// Stores generated rays
 	vector<shared_ptr<Ray>> rays;
+
+
+	/* debug ray hit section
+	 * remove later
+	{
+				glm::vec3 pos(0.0, 0.0, 0.0);
+				glm::vec3 scale(1.0, 1.0, 1.0);
+				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
+				glm::vec3 diffuse(0.0, 0.0, 1.0);
+				glm::vec3 specular(1.0, 1.0, 0.5);
+				glm::vec3 ambient(0.1, 0.1, 0.1);
+				double exponent = 100.0;
+				Sphere sph(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
+				glm::vec3 poss(0.0, 0.0, 5.0);
+				glm::vec3 dir(0.0, 0.0, -1.0);
+				Ray ra;
+				ra.origin = poss;
+				ra.direction = dir;
+				vector<Hit> hits = sph.intersection(ra);
+				for(int i = 0; i < hits.size(); i++) {
+					cout << hits[i].hit_normal.x << " " << hits[i].hit_normal.y << " " << hits[i].hit_normal.z << endl;
+					cout << hits[i].distance << endl;
+				}
+	}
+	*/
 
 
 	// Checks if number of arguments is valid

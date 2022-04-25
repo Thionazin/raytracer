@@ -9,7 +9,7 @@ using std::vector;
 
 class Sphere : public SceneOBJ {
 	public:
-		Sphere(glm::vec3 cen, double rad, glm::vec3 sca, glm::vec4 rot, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, double exp) {
+		Sphere(glm::vec3 cen, float rad, glm::vec3 sca, glm::vec4 rot, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, double exp) {
 			center = cen; 
 			radius = rad;
 			scale = sca;
@@ -22,10 +22,11 @@ class Sphere : public SceneOBJ {
 		~Sphere() {};
 		std::vector<Hit> intersection(Ray& input_ray);
 		void convertCoords(std::shared_ptr<MatrixStack>& MV);
-		double getRad() { return radius; }
+		void doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y);
+		float getRad() { return radius; }
 	private:
 		glm::vec3 center;
-		double radius;
+		float radius;
 		glm::vec3 scale;
 		glm::vec4 rotation;
 		glm::vec3 ambient;

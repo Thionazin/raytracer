@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "../scene/Scene.h"
+#include "../image/Image.h"
 
 class MatrixStack;
 
