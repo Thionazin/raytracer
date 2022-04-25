@@ -34,10 +34,10 @@ std::vector<Hit> Sphere::intersection(Ray& input_ray) {
 	return output;
 }
 
-glm::vec3 Sphere::doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
+glm::vec3 Sphere::doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
 	glm::vec3 color(0.0f);
 	color += ambient;
-	glm::vec3 cpos(0.0f);
+	glm::vec3 cpos(hit_ray.origin);
 	for(size_t i = 0; i < lights.size(); i++) {
 		glm::vec3 l = glm::normalize(lights[i]->position - hit.hit_point);
 		Ray ra;

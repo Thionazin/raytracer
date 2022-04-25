@@ -30,31 +30,31 @@ std::vector<Hit> Ellipsoid::intersection(Ray& input_ray) {
 		return output;
 	}
 	float t1 = (-b + std::sqrt(d))/(2.0f*a);
-	if(!(t1 < 0.0f)) {
+	if(!(t1 <= 0.0f)) {
 		glm::vec3 xt = ra.origin + t1 * ra.direction;
 		glm::vec3 x1 = transformation * glm::vec4(xt, 1.0);
 		glm::vec3 n1 = inverse_transpose_transform * glm::vec4(xt, 0.0);
 		n1 = normalize(n1);
-		t1 = glm::length(x1);
+		t1 = glm::length(x1-input_ray.origin);
 		output.emplace_back(t1, x1, n1);
 	}
 
 	float t2 = (-b - std::sqrt(d))/(2.0f*a);
-	if(!(t2 < 0.0f)) {
+	if(!(t2 <= 0.0f)) {
 		glm::vec3 xt = ra.origin + t2 * ra.direction;
 		glm::vec3 x2 = transformation * glm::vec4(xt, 1.0);
 		glm::vec3 n2 = inverse_transpose_transform * glm::vec4(xt, 0.0);
 		n2 = normalize(n2);
-		t2 = glm::length(x2);
+		t2 = glm::length(x2-input_ray.origin);
 		output.emplace_back(t2, x2, n2);
 	}
 	return output;
 }
 
-glm::vec3 Ellipsoid::doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
+glm::vec3 Ellipsoid::doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
 	glm::vec3 color(0.0f);
 	color += ambient;
-	glm::vec3 cpos(0.0f);
+	glm::vec3 cpos(hit_ray.origin);
 	for(size_t i = 0; i < lights.size(); i++) {
 		glm::vec3 l = glm::normalize(lights[i]->position - hit.hit_point);
 		Ray ra;

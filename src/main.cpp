@@ -17,6 +17,7 @@
 #include "scene_object/Sphere.h"
 #include "scene_object/Plane.h"
 #include "scene_object/Ellipsoid.h"
+#include "scene_object/RFSphere.h"
 #include "scene/Scene.h"
 
 // This allows you to skip the `std::` in front of C++ standard library
@@ -161,6 +162,34 @@ void generateScene(Scene& scene, int scene_no)
 				double exponent = 100.0;
 				// Radius hard coded to speed up computation
 				Sphere* sph = new Sphere(pos, 0.3f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Reflective Sphere 1
+			{
+				glm::vec3 pos(-0.5f, 0.0f, -0.5f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 0.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.0f, 0.0f, 0.0f);
+				double exponent = 0.0;
+				// Radius hard coded to speed up computation
+				RFSphere* sph = new RFSphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Reflective Sphere 2
+			{
+				glm::vec3 pos(1.5f, 0.0f, -1.5f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 0.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.0f, 0.0f, 0.0f);
+				double exponent = 0.0;
+				// Radius hard coded to speed up computation
+				RFSphere* sph = new RFSphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
 				SceneOBJ* _obj = sph;
 				scene.objs.push_back(_obj);
 			}

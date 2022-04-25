@@ -22,7 +22,7 @@ class RFSphere : public SceneOBJ {
 		~RFSphere() {};
 		std::vector<Hit> intersection(Ray& input_ray);
 		void convertCoords(std::shared_ptr<MatrixStack>& MV);
-		glm::vec3 doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth);
+		glm::vec3 doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth);
 		float getRad() { return radius; }
 	private:
 		glm::vec3 center;

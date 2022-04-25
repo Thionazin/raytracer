@@ -36,7 +36,7 @@ class SceneOBJ {
 		virtual std::vector<Hit> intersection(Ray& input_ray);
 		virtual void convertCoords(std::shared_ptr<MatrixStack>& MV) {};
 		virtual float getRad() { return -100.0f; };
-		virtual glm::vec3 doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) { return glm::vec3(0.0f); };
+		virtual glm::vec3 doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) { return glm::vec3(0.0f); };
 	private:
 		glm::mat4 transform;
 		glm::mat4 inverse_transform;
