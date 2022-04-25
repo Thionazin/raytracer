@@ -19,7 +19,7 @@ std::vector<Hit> Plane::intersection(Ray& input_ray) {
 	return output;
 }
 
-void Plane::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y) {
+glm::vec3 Plane::doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
 	glm::vec3 color(0.0f);
 	color += ambient;
 	glm::vec3 cpos(0.0f);
@@ -44,5 +44,5 @@ void Plane::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::v
 		}
 	}
 	color = glm::clamp(color, glm::vec3(0.0f), glm::vec3(1.0f));
-	im.setPixel(x, y, 255*color.x, 255*color.y, 255*color.z);
+	return color;
 }

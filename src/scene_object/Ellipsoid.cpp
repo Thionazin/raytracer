@@ -51,7 +51,7 @@ std::vector<Hit> Ellipsoid::intersection(Ray& input_ray) {
 	return output;
 }
 
-void Ellipsoid::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y) {
+glm::vec3 Ellipsoid::doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth) {
 	glm::vec3 color(0.0f);
 	color += ambient;
 	glm::vec3 cpos(0.0f);
@@ -76,5 +76,5 @@ void Ellipsoid::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, st
 		}
 	}
 	color = glm::clamp(color, glm::vec3(0.0f), glm::vec3(1.0f));
-	im.setPixel(x, y, 255*color.x, 255*color.y, 255*color.z);
+	return color;
 }

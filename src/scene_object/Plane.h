@@ -22,7 +22,7 @@ class Plane : public SceneOBJ {
 		~Plane() {};
 		std::vector<Hit> intersection(Ray& input_ray);
 		void convertCoords(std::shared_ptr<MatrixStack>& MV);
-		void doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y);
+		glm::vec3 doBPShading(Hit& hit, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int depth);
 		float getRad() { return -200.0f; }
 	private:
 		glm::vec3 normal;

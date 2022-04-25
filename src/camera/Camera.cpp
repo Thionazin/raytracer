@@ -90,7 +90,8 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 				}
 			}
 			if(closest_dist != DBL_MAX) {
-				closest->doBPShading(closest_hit, image, scene.lights, scene.objs, c, height-r-1);
+				glm::vec3 color = closest->doBPShading(closest_hit, scene.lights, scene.objs, 0);
+				image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
 			} else {
 				image.setPixel(c, height-r-1, 0, 0, 0);
 			}
