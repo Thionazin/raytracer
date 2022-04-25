@@ -1,40 +1,57 @@
 #include <iostream>
 #include <algorithm>
-#include "Sphere.h"
+#include "Ellipsoid.h"
 
-void Sphere::convertCoords(std::shared_ptr<MatrixStack>& MV) {
-	// only translations for now
-	center = (MV->topMatrix() * glm::vec4(center, 1.0));
+void Ellipsoid::convertCoords(std::shared_ptr<MatrixStack>& MV) {
+	//center = (MV->topMatrix() * glm::vec4(center, 1.0));
+	// need to generate transformation matrixes instead
+	MV->translate(center);
+	MV->scale(scale);
+	transformation = MV->topMatrix();
+	inverse_transform = glm::inverse(transformation);
+	inverse_transpose_transform = glm::inverse(glm::transpose(transformation));
 }
 
-std::vector<Hit> Sphere::intersection(Ray& input_ray) {
+std::vector<Hit> Ellipsoid::intersection(Ray& input_ray) {
 	std::vector<Hit> output;
-	glm::vec3 pc = input_ray.origin - center;
-	float a = glm::dot(input_ray.direction, input_ray.direction);
-	float b = 2.0f * glm::dot((pc), input_ray.direction);
+	// new variables
+	glm::vec3 new_cen(0.0f);
+	Ray ra = input_ray;
+	ra.origin = inverse_transform * glm::vec4(ra.origin, 1.0);
+	ra.direction = inverse_transform * glm::vec4(ra.direction, 0.0);
+	ra.direction = glm::normalize(ra.direction);
+
+	glm::vec3 pc = ra.origin - new_cen;
+	float a = glm::dot(ra.direction, ra.direction);
+	float b = 2.0f * glm::dot((pc), ra.direction);
 	float c = glm::dot((pc), (pc)) - (radius * radius);
 	float d = b*b - 4.0f * a * c;
 	if(d <= 0.0f) {
 		return output;
 	}
 	float t1 = (-b + std::sqrt(d))/(2.0f*a);
-	glm::vec3 x1 = (input_ray.origin + t1 * input_ray.direction);
-	glm::vec3 n1 = (x1 - center)/((float)radius);
-	n1 = glm::clamp(n1, glm::vec3(-1.0f), glm::vec3(1.0f));
 	if(!(t1 < 0.0f)) {
+		glm::vec3 xt = ra.origin + t1 * ra.direction;
+		glm::vec3 x1 = transformation * glm::vec4(xt, 1.0);
+		glm::vec3 n1 = inverse_transpose_transform * glm::vec4(xt, 0.0);
+		n1 = normalize(n1);
+		t1 = glm::length(x1);
 		output.emplace_back(t1, x1, n1);
 	}
+
 	float t2 = (-b - std::sqrt(d))/(2.0f*a);
-	glm::vec3 x2 = (input_ray.origin + t2 * input_ray.direction);
-	glm::vec3 n2 = (x2 - center)/((float)radius);
-	n2 = glm::clamp(n2, glm::vec3(-1.0f), glm::vec3(1.0f));
 	if(!(t2 < 0.0f)) {
+		glm::vec3 xt = ra.origin + t2 * ra.direction;
+		glm::vec3 x2 = transformation * glm::vec4(xt, 1.0);
+		glm::vec3 n2 = inverse_transpose_transform * glm::vec4(xt, 0.0);
+		n2 = normalize(n2);
+		t2 = glm::length(x2);
 		output.emplace_back(t2, x2, n2);
 	}
 	return output;
 }
 
-void Sphere::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y) {
+void Ellipsoid::doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y) {
 	glm::vec3 color(0.0f);
 	color += ambient;
 	glm::vec3 cpos(0.0f);

@@ -14,21 +14,6 @@ Camera::Camera(int _width, int _height, double _fov, glm::vec3 _pos, glm::vec4 _
 	position(_pos),
 	rotation(_rot)
 {
-	rays = std::vector<std::vector<Ray>>(height);
-	for(int r = 0; r < height; r++) {
-		std::vector<Ray> row(width);
-		for(int c = 0; c < width; c++) {
-			double pixelX = (2.0 * ((((double)c) + 0.5)/width) - 1.0) * aspect * std::tan(fovy/2);
-			double pixelY = (1.0 - (2.0 * ((((double)r) + 0.5)/height))) * std::tan(fovy/2);
-			glm::vec3 ray_origin(0.0f);
-			glm::vec3 ray_direction = glm::normalize(glm::vec3(pixelX, pixelY, -1.0f) - ray_origin);
-			Ray new_ray;
-			new_ray.origin = ray_origin;
-			new_ray.direction = ray_direction;
-			row[c] = new_ray;
-		}
-		rays[r] = row;
-	}
 }
 
 Camera::~Camera()
@@ -74,12 +59,19 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 	// draw
 	for(int r = 0; r < height; r++) {
 		for(int c = 0; c < width; c++) {
+			double pixelX = (2.0 * ((((double)c) + 0.5)/width) - 1.0) * aspect * std::tan(fovy/2);
+			double pixelY = (1.0 - (2.0 * ((((double)r) + 0.5)/height))) * std::tan(fovy/2);
+			glm::vec3 ray_origin(0.0f);
+			glm::vec3 ray_direction = glm::normalize(glm::vec3(pixelX, pixelY, -1.0f) - ray_origin);
+			Ray new_ray;
+			new_ray.origin = ray_origin;
+			new_ray.direction = ray_direction;
 			// assumes every scene has at least one object. Otherwise there wouldn't be any point would there
 			SceneOBJ* closest = scene.objs[0];
 			double closest_dist = DBL_MAX;
 			Hit closest_hit;
 			{
-				std::vector<Hit> hit_vec = scene.objs[0]->intersection(rays[r][c]);
+				std::vector<Hit> hit_vec = scene.objs[0]->intersection(new_ray);
 				for(size_t j = 0; j < hit_vec.size(); j++) {
 					if(hit_vec[j].distance < closest_dist) {
 						closest_dist = hit_vec[j].distance;
@@ -88,7 +80,7 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 				}
 			}
 			for(unsigned int i = 1; i < scene.objs.size(); i++) {
-				std::vector<Hit> hit_vec = scene.objs[i]->intersection(rays[r][c]);
+				std::vector<Hit> hit_vec = scene.objs[i]->intersection(new_ray);
 				for(size_t j = 0; j < hit_vec.size(); j++) {
 					if(hit_vec[j].distance < closest_dist) {
 						closest = scene.objs[i];

@@ -38,6 +38,9 @@ class SceneOBJ {
 		virtual float getRad() { return -100.0f; };
 		virtual void doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y) {};
 	private:
+		glm::mat4 transform;
+		glm::mat4 inverse_transform;
+		glm::mat4 inverse_transpose_transform;
 		glm::vec3 normal;
 		glm::vec3 center;
 		double radius;

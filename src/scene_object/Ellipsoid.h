@@ -7,11 +7,11 @@
 
 using std::vector;
 
-class Sphere : public SceneOBJ {
+class Ellipsoid : public SceneOBJ {
 	public:
-		Sphere(glm::vec3 cen, float rad, glm::vec3 sca, glm::vec4 rot, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, double exp) {
+		Ellipsoid(glm::vec3 cen, float rad, glm::vec3 sca, glm::vec4 rot, glm::vec3 amb, glm::vec3 diff, glm::vec3 spec, double exp) {
 			center = cen; 
-			radius = rad;
+			radius = 1.0;
 			scale = sca;
 			rotation = rot;
 			ambient = amb;
@@ -19,12 +19,15 @@ class Sphere : public SceneOBJ {
 			specular = spec;
 			exponent = exp;
 		};
-		~Sphere() {};
+		~Ellipsoid() {};
 		std::vector<Hit> intersection(Ray& input_ray);
 		void convertCoords(std::shared_ptr<MatrixStack>& MV);
 		void doBPShading(Hit& hit, Image& im, std::vector<Light*>& lights, std::vector<SceneOBJ*>& objs, int x, int y);
 		float getRad() { return radius; }
 	private:
+		glm::mat4 transformation;
+		glm::mat4 inverse_transform;
+		glm::mat4 inverse_transpose_transform;
 		glm::vec3 center;
 		float radius;
 		glm::vec3 scale;
