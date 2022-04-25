@@ -134,6 +134,79 @@ void generateScene(Scene& scene, int scene_no)
 				scene.lights.push_back(lh);
 			}
 		break;
+		case 4:
+		case 5:
+			// Red Sphere
+			{
+				glm::vec3 pos(0.5f, -0.7f, 0.5f);
+				glm::vec3 scale(0.3f, 0.3f, 0.3f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				Sphere* sph = new Sphere(pos, 0.3f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Blue Sphere
+			{
+				glm::vec3 pos(1.0f, -0.7f, 0.0f);
+				glm::vec3 scale(0.3f, 0.3f, 0.3f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				Sphere* sph = new Sphere(pos, 0.3f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Floor
+			{
+				glm::vec3 nor(0.0f, 1.0f, 0.0f);
+				glm::vec3 pos(0.0f, -1.0f, 0.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 1.0f, 1.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 0.0;
+				Plane* pla = new Plane(nor, pos, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = pla;
+				scene.objs.push_back(_obj);
+			}
+			// Back wall
+			{
+				glm::vec3 nor(0.0f, 0.0f, 1.0f);
+				glm::vec3 pos(0.0f, 0.0f, -3.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 1.0f, 1.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 0.0;
+				Plane* pla = new Plane(nor, pos, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = pla;
+				scene.objs.push_back(_obj);
+			}
+			// Light 1
+			{
+				glm::vec3 pos(-1.0f, 2.0f, 1.0f);
+				float col = 0.5f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+			// Light 2
+			{
+				glm::vec3 pos(0.5f, -0.5f, 0.0f);
+				float col = 0.5f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+		break;
 	}
 }
 

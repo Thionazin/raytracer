@@ -62,10 +62,15 @@ glm::vec3 Ellipsoid::doBPShading(Hit& hit, std::vector<Light*>& lights, std::vec
 		ra.direction = l;
 		bool shadowed = false;
 		for(size_t j = 0; j < objs.size(); j++) {
+			// Self intersection impossible, just ignore yourself instead
 			if(objs[j] != this) {
 				std::vector<Hit> can_hit = objs[j]->intersection(ra);
 				if(can_hit.size() > 0) {
-					shadowed = true;
+					for(size_t k = 0; k < can_hit.size(); k++) {
+						if(can_hit[k].distance < glm::length(lights[i]->position-hit.hit_point)) {
+							shadowed = true;
+						}
+					}
 				}
 			}
 		}
