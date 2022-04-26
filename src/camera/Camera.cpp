@@ -100,7 +100,7 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 	image.writeToFile(output_name);
 }
 
-void Camera::drawAAScene() {
+void Camera::drawAAScene(Scene& scene, std::string output_name) {
 	Image image(width, height);
 
 	// Convert coords of all items to camera space
@@ -119,16 +119,22 @@ void Camera::drawAAScene() {
 
 
 	// draw
-	for(int r = 0; r < height; r++) {
-		for(int c = 0; c < width; c++) {
-			double pixelX = (2.0 * ((((double)c) + 0.5)/width) - 1.0) * aspect * std::tan(fovy/2);
-			double pixelY = (1.0 - (2.0 * ((((double)r) + 0.5)/height))) * std::tan(fovy/2);
+	int double_height = 2 * height;
+	int double_width = 2 * width;
+	std::vector<std::vector<glm::vec3>> super_sample(double_height);
+	for(int r = 0; r < double_height; r++) {
+		std::vector<glm::vec3> ss_row(double_width);
+		for(int c = 0; c < double_width; c++) {
+			// central ray
+			double pixelX = (2.0 * ((((double)c) + 0.5)/double_width) - 1.0) * aspect * std::tan(fovy/2);
+			double pixelY = (1.0 - (2.0 * ((((double)r) + 0.5)/double_height))) * std::tan(fovy/2);
 			glm::vec3 ray_origin(0.0f);
 			glm::vec3 ray_direction = glm::normalize(glm::vec3(pixelX, pixelY, -1.0f) - ray_origin);
 			Ray new_ray;
 			new_ray.origin = ray_origin;
 			new_ray.direction = ray_direction;
 			// assumes every scene has at least one object. Otherwise there wouldn't be any point would there
+
 			SceneOBJ* closest = scene.objs[0];
 			double closest_dist = DBL_MAX;
 			Hit closest_hit;
@@ -153,10 +159,20 @@ void Camera::drawAAScene() {
 			}
 			if(closest_dist != DBL_MAX) {
 				glm::vec3 color = closest->doBPShading(closest_hit, new_ray, scene.lights, scene.objs, 0);
-				image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
+				// image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
+				ss_row[c] = color;
 			} else {
-				image.setPixel(c, height-r-1, 0, 0, 0);
+				ss_row[c] = glm::vec3(0.0f);
+				// image.setPixel(c, height-r-1, 0, 0, 0);
 			}
+		}
+		super_sample[r] = ss_row;
+	}
+	for(int r = 0; r < height; r++) {
+		for(int c = 0; c < width; c++) {
+			glm::vec3 color = 0.25f*super_sample[2*r][2*c] + 0.25f*super_sample[2*r+1][2*c] + 0.25f*super_sample[2*r][2*c+1] + 0.25f*super_sample[2*r+1][2*c+1];
+			//color = glm::clamp(color, 0.0f, 1.0f);
+			image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
 		}
 	}
 	image.writeToFile(output_name);

@@ -357,6 +357,7 @@ void generateScene(Scene& scene, int scene_no)
 				scene.lights.push_back(lh);
 			}
 		break;
+		case 0:
 		case 9:
 			// Red Sphere
 			{
@@ -391,7 +392,7 @@ void generateScene(Scene& scene, int scene_no)
 				glm::vec3 pos(-0.5f, 0.0f, -0.5f);
 				glm::vec3 scale(1.0f, 1.0f, 1.0f);
 				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
-				glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.7f, 0.0f, 0.7f);
 				glm::vec3 specular(1.0f, 1.0f, 0.5f);
 				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
 				double exponent = 100.0;
@@ -405,7 +406,7 @@ void generateScene(Scene& scene, int scene_no)
 				glm::vec3 pos(1.5f, 0.0f, -1.5f);
 				glm::vec3 scale(1.0f, 1.0f, 1.0f);
 				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
-				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 diffuse(0.0f, 0.7f, 0.0f);
 				glm::vec3 specular(1.0f, 1.0f, 0.5f);
 				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
 				double exponent = 100.0;
@@ -526,7 +527,11 @@ int main(int argc, char **argv)
 
 
 	// draw scene with camera
-	cam.drawScene(scene, output_file);
+	if(scene_no != 0) {
+		cam.drawScene(scene, output_file);
+	} else {
+		cam.drawAAScene(scene, output_file);
+	}
 
 
 	return 0;
