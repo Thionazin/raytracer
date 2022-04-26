@@ -50,4 +50,8 @@ class SceneOBJ {
 		glm::vec3 diffuse;
 		glm::vec3 specular;
 		double exponent;
+		std::vector<float> posBuf;
+		std::vector<float> norBuf;
+		std::vector<float> texBuf;
+		glm::vec3 translations;
 };

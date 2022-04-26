@@ -17,8 +17,8 @@ std::vector<Hit> Ellipsoid::intersection(Ray& input_ray) {
 	// new variables
 	glm::vec3 new_cen(0.0f);
 	Ray ra = input_ray;
-	ra.origin = inverse_transform * glm::vec4(ra.origin, 1.0);
-	ra.direction = inverse_transform * glm::vec4(ra.direction, 0.0);
+	ra.origin = inverse_transform * glm::vec4(ra.origin, 1.0f);
+	ra.direction = inverse_transform * glm::vec4(ra.direction, 0.0f);
 	ra.direction = glm::normalize(ra.direction);
 
 	glm::vec3 pc = ra.origin - new_cen;

@@ -18,6 +18,7 @@
 #include "scene_object/Plane.h"
 #include "scene_object/Ellipsoid.h"
 #include "scene_object/RFSphere.h"
+#include "scene_object/Mesh.h"
 #include "scene/Scene.h"
 
 // This allows you to skip the `std::` in front of C++ standard library
@@ -26,9 +27,79 @@
 using namespace std;
 
 
+void populateOBJ(vector<float>& posBuf, vector<float>& norBuf, vector<float>& texBuf, string meshName, glm::vec3& center, float& radius) {
+	float minX = FLT_MAX;
+	float minY = FLT_MAX;
+	float minZ = FLT_MAX;
+	float maxX = FLT_MIN;
+	float maxY = FLT_MIN;
+	float maxZ = FLT_MIN;
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	string errStr;
+	bool rc = tinyobj::LoadObj(&attrib, &shapes, &materials, &errStr, meshName.c_str());
+	if(!rc) {
+		cerr << errStr << endl;
+	} else {
+		// Some OBJ files have different indices for vertex positions, normals,
+		// and texture coordinates. For example, a cube corner vertex may have
+		// three different normals. Here, we are going to duplicate all such
+		// vertices.
+		// Loop over shapes
+		for(size_t s = 0; s < shapes.size(); s++) {
+			// Loop over faces (polygons)
+			size_t index_offset = 0;
+			for(size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+				size_t fv = shapes[s].mesh.num_face_vertices[f];
+				// Loop over vertices in the face.
+				for(size_t v = 0; v < fv; v++) {
+					// access to vertex
+					tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+					maxX = max(maxX, attrib.vertices[3*idx.vertex_index+0]);
+					minX = min(minX, attrib.vertices[3*idx.vertex_index+0]);
+					maxY = max(maxY, attrib.vertices[3*idx.vertex_index+1]);
+					minY = min(minY, attrib.vertices[3*idx.vertex_index+1]);
+					maxZ = max(maxZ, attrib.vertices[3*idx.vertex_index+2]);
+					minZ = min(minZ, attrib.vertices[3*idx.vertex_index+2]);
+					posBuf.push_back(attrib.vertices[3*idx.vertex_index+0]);
+					posBuf.push_back(attrib.vertices[3*idx.vertex_index+1]);
+					posBuf.push_back(attrib.vertices[3*idx.vertex_index+2]);
+					if(!attrib.normals.empty()) {
+						norBuf.push_back(attrib.normals[3*idx.normal_index+0]);
+						norBuf.push_back(attrib.normals[3*idx.normal_index+1]);
+						norBuf.push_back(attrib.normals[3*idx.normal_index+2]);
+					}
+					if(!attrib.texcoords.empty()) {
+						texBuf.push_back(attrib.texcoords[2*idx.texcoord_index+0]);
+						texBuf.push_back(attrib.texcoords[2*idx.texcoord_index+1]);
+					}
+				}
+				index_offset += fv;
+				// per-face material (IGNORE)
+				shapes[s].mesh.material_ids[f];
+			}
+		}
+	}
+	center.x = 0.5*(maxX + minX);
+	center.y = 0.5*(maxY + minY);
+	center.z = 0.5*(maxZ + minZ);
+	radius = glm::length(glm::vec3(0.5*(maxX-minX), 0.5*(maxY-minY), 0.5*(maxZ-minZ)) - glm::vec3(0.0f))+ 1e-5;
+	/*
+	 * debug print statements
+	cout << maxX << " " << minX << endl;
+	cout << maxY << " " << minY << endl;
+	cout << maxZ << " " << minZ << endl;
+	cout << radius << endl;
+	cout << center.x << " " << center.y << " " << center.z << endl;
+	*/
+}
+
+
 void generateScene(Scene& scene, int scene_no)
 {
 	switch(scene_no) {
+		case 8:
 		case 1:
 		case 2:
 			// Red Sphere
@@ -236,6 +307,64 @@ void generateScene(Scene& scene, int scene_no)
 				scene.lights.push_back(lh);
 			}
 		break;
+		case 6:
+			// Bunny
+			{
+				glm::vec3 center;
+				float radius;
+				glm::vec3 translate(0.0f, 0.0f, 0.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotate(0.0f, 0.0f, 1.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				double exponent = 100.0;
+				vector<float> poss;
+				vector<float> norr;
+				vector<float> texx;
+				string filename = "../resources/bunny.obj";
+				populateOBJ(poss, norr, texx, filename, center, radius);
+				Mesh* bunny = new Mesh(center, radius, scale, rotate, ambient, diffuse, specular, exponent, poss, norr, texx, translate);
+				SceneOBJ* _obj = bunny;
+				scene.objs.push_back(_obj);
+			}
+			// Light
+			{
+				glm::vec3 pos(-1.0f, 1.0f, 1.0f);
+				float col = 1.0f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+		break;
+		case 7:
+			// Bunny
+			{
+				glm::vec3 center;
+				float radius;
+				glm::vec3 translate(0.3f, -1.5f, 0.0f);
+				glm::vec3 scale(1.5f, 1.5f, 1.5f);
+				glm::vec4 rotate(((float)(20*M_PI/180)), 1.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				double exponent = 100.0;
+				vector<float> poss;
+				vector<float> norr;
+				vector<float> texx;
+				string filename = "../resources/bunny.obj";
+				populateOBJ(poss, norr, texx, filename, center, radius);
+				Mesh* bunny = new Mesh(center, radius*max(scale.x, max(scale.y, scale.z)), scale, rotate, ambient, diffuse, specular, exponent, poss, norr, texx, translate);
+				SceneOBJ* _obj = bunny;
+				scene.objs.push_back(_obj);
+			}
+			// Light
+			{
+				glm::vec3 pos(1.0f, 1.0f, 2.0f);
+				float col = 1.0f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+		break;
 	}
 }
 
@@ -252,38 +381,6 @@ int main(int argc, char **argv)
 	glm::vec4 camera_rot(0.0f, 0.0f, 0.0f, 0.0f);
 
 	
-	// Storage of scene objects
-	vector<shared_ptr<SceneOBJ>> objs;
-
-	// Stores generated rays
-	vector<shared_ptr<Ray>> rays;
-
-
-	/* debug ray hit section
-	 * remove later
-	{
-				glm::vec3 pos(0.0, 0.0, 0.0);
-				glm::vec3 scale(1.0, 1.0, 1.0);
-				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
-				glm::vec3 diffuse(0.0, 0.0, 1.0);
-				glm::vec3 specular(1.0, 1.0, 0.5);
-				glm::vec3 ambient(0.1, 0.1, 0.1);
-				double exponent = 100.0;
-				Sphere sph(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
-				glm::vec3 poss(0.0, 0.0, 5.0);
-				glm::vec3 dir(0.0, 0.0, -1.0);
-				Ray ra;
-				ra.origin = poss;
-				ra.direction = dir;
-				vector<Hit> hits = sph.intersection(ra);
-				for(int i = 0; i < hits.size(); i++) {
-					cout << hits[i].hit_normal.x << " " << hits[i].hit_normal.y << " " << hits[i].hit_normal.z << endl;
-					cout << hits[i].distance << endl;
-				}
-	}
-	*/
-
-
 	// Checks if number of arguments is valid
 	if(argc < 4) {
 		cout << "Invalid Arguments" << endl;
@@ -323,6 +420,8 @@ int main(int argc, char **argv)
 
 
 
+
+
 	// initialize camera and populate rays
 	// TODO: generate camera dependant on scene. If scene 8, camera's fovy will be different.
 	// Although aspect will never change in the scope of this assignment, I added a field for it for later editing.
@@ -344,48 +443,27 @@ int main(int argc, char **argv)
 /*
  * objs not needed as of yet
 // Load geometry
-vector<float> posBuf; // list of vertex positions
-vector<float> norBuf; // list of vertex normals
-vector<float> texBuf; // list of vertex texture coords
-tinyobj::attrib_t attrib;
-std::vector<tinyobj::shape_t> shapes;
-std::vector<tinyobj::material_t> materials;
-string errStr;
-bool rc = tinyobj::LoadObj(&attrib, &shapes, &materials, &errStr, meshName.c_str());
-if(!rc) {
-	cerr << errStr << endl;
-} else {
-	// Some OBJ files have different indices for vertex positions, normals,
-	// and texture coordinates. For example, a cube corner vertex may have
-	// three different normals. Here, we are going to duplicate all such
-	// vertices.
-	// Loop over shapes
-	for(size_t s = 0; s < shapes.size(); s++) {
-		// Loop over faces (polygons)
-		size_t index_offset = 0;
-		for(size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-			size_t fv = shapes[s].mesh.num_face_vertices[f];
-			// Loop over vertices in the face.
-			for(size_t v = 0; v < fv; v++) {
-				// access to vertex
-				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-				posBuf.push_back(attrib.vertices[3*idx.vertex_index+0]);
-				posBuf.push_back(attrib.vertices[3*idx.vertex_index+1]);
-				posBuf.push_back(attrib.vertices[3*idx.vertex_index+2]);
-				if(!attrib.normals.empty()) {
-					norBuf.push_back(attrib.normals[3*idx.normal_index+0]);
-					norBuf.push_back(attrib.normals[3*idx.normal_index+1]);
-					norBuf.push_back(attrib.normals[3*idx.normal_index+2]);
-				}
-				if(!attrib.texcoords.empty()) {
-					texBuf.push_back(attrib.texcoords[2*idx.texcoord_index+0]);
-					texBuf.push_back(attrib.texcoords[2*idx.texcoord_index+1]);
-				}
-			}
-			index_offset += fv;
-			// per-face material (IGNORE)
-			shapes[s].mesh.material_ids[f];
-		}
-	}
-}
 */
+	/* debug ray hit section
+	 * remove later
+	{
+				glm::vec3 pos(0.0, 0.0, 0.0);
+				glm::vec3 scale(1.0, 1.0, 1.0);
+				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
+				glm::vec3 diffuse(0.0, 0.0, 1.0);
+				glm::vec3 specular(1.0, 1.0, 0.5);
+				glm::vec3 ambient(0.1, 0.1, 0.1);
+				double exponent = 100.0;
+				Sphere sph(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
+				glm::vec3 poss(0.0, 0.0, 5.0);
+				glm::vec3 dir(0.0, 0.0, -1.0);
+				Ray ra;
+				ra.origin = poss;
+				ra.direction = dir;
+				vector<Hit> hits = sph.intersection(ra);
+				for(int i = 0; i < hits.size(); i++) {
+					cout << hits[i].hit_normal.x << " " << hits[i].hit_normal.y << " " << hits[i].hit_normal.z << endl;
+					cout << hits[i].distance << endl;
+				}
+	}
+	*/

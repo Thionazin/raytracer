@@ -35,7 +35,7 @@ void Camera::debugTestRays()
 
 void Camera::applyViewMatrix(std::shared_ptr<MatrixStack> MV) const
 {
-	MV->multMatrix(glm::lookAt(position, glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+	MV->multMatrix(glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
 void Camera::drawScene(Scene& scene, std::string output_name) {
