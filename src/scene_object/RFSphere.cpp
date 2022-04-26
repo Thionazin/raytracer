@@ -83,17 +83,8 @@ glm::vec3 RFSphere::doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lig
 			}
 		}
 	}
-	if(closest_dist != DBL_MAX && closest != nullptr) {
-		return closest->doBPShading(closest_hit, ref_ray, lights, objs, depth+1);
-	}
-	return color;
-	
-
-
-	// blinn phong not considered for now. Instead recurse on to next nearest object
-	/*
 	color += ambient;
-	glm::vec3 cpos(0.0f);
+	glm::vec3 cpos(hit_ray.origin);
 	for(size_t i = 0; i < lights.size(); i++) {
 		glm::vec3 l = glm::normalize(lights[i]->position - hit.hit_point);
 		Ray ra;
@@ -104,7 +95,11 @@ glm::vec3 RFSphere::doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lig
 			if(objs[j] != this) {
 				std::vector<Hit> can_hit = objs[j]->intersection(ra);
 				if(can_hit.size() > 0) {
-					shadowed = true;
+					for(size_t k = 0; k < can_hit.size(); k++) {
+						if(can_hit[k].distance < glm::length(lights[i]->position-hit.hit_point)) {
+							shadowed = true;
+						}
+					}
 				}
 			}
 		}
@@ -115,6 +110,23 @@ glm::vec3 RFSphere::doBPShading(Hit& hit, Ray& hit_ray, std::vector<Light*>& lig
 		}
 	}
 	color = glm::clamp(color, glm::vec3(0.0f), glm::vec3(1.0f));
-	*/
+	if(specular != glm::vec3(0.0f)) {
+		if(closest_dist != DBL_MAX && closest != nullptr) {
+			glm::vec3 outcolor = 0.7f*color + 0.3f*closest->doBPShading(closest_hit, ref_ray, lights, objs, depth+1);
+			outcolor = glm::clamp(outcolor, glm::vec3(0.0f), glm::vec3(1.0f));
+			return outcolor;
+		}
+		glm::vec3 outcolor = 0.7f*color + 0.3f*glm::vec3(0.0f);
+		outcolor = glm::clamp(outcolor, glm::vec3(0.0f), glm::vec3(1.0f));
+		return outcolor;
+	} else {
+		if(closest_dist != DBL_MAX && closest != nullptr) {
+			return closest->doBPShading(closest_hit, ref_ray, lights, objs, depth+1);
+		}
+		return glm::vec3(0.0f);
+	}
+	
+
+
 	return color;
 }

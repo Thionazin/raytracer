@@ -85,14 +85,6 @@ void populateOBJ(vector<float>& posBuf, vector<float>& norBuf, vector<float>& te
 	center.y = 0.5*(maxY + minY);
 	center.z = 0.5*(maxZ + minZ);
 	radius = glm::length(glm::vec3(0.5*(maxX-minX), 0.5*(maxY-minY), 0.5*(maxZ-minZ)) - glm::vec3(0.0f))+ 1e-5;
-	/*
-	 * debug print statements
-	cout << maxX << " " << minX << endl;
-	cout << maxY << " " << minY << endl;
-	cout << maxZ << " " << minZ << endl;
-	cout << radius << endl;
-	cout << center.x << " " << center.y << " " << center.z << endl;
-	*/
 }
 
 
@@ -365,6 +357,106 @@ void generateScene(Scene& scene, int scene_no)
 				scene.lights.push_back(lh);
 			}
 		break;
+		case 9:
+			// Red Sphere
+			{
+				glm::vec3 pos(0.5f, -0.7f, 0.5f);
+				glm::vec3 scale(0.3f, 0.3f, 0.3f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				Sphere* sph = new Sphere(pos, 0.3f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Blue Sphere
+			{
+				glm::vec3 pos(1.0f, -0.7f, 0.0f);
+				glm::vec3 scale(0.3f, 0.3f, 0.3f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				Sphere* sph = new Sphere(pos, 0.3f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Reflective Sphere 1
+			{
+				glm::vec3 pos(-0.5f, 0.0f, -0.5f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				RFSphere* sph = new RFSphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Reflective Sphere 2
+			{
+				glm::vec3 pos(1.5f, 0.0f, -1.5f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(0.0f, 0.0f, 1.0f);
+				glm::vec3 specular(1.0f, 1.0f, 0.5f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 100.0;
+				// Radius hard coded to speed up computation
+				RFSphere* sph = new RFSphere(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = sph;
+				scene.objs.push_back(_obj);
+			}
+			// Floor
+			{
+				glm::vec3 nor(0.0f, 1.0f, 0.0f);
+				glm::vec3 pos(0.0f, -1.0f, 0.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 1.0f, 1.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 0.0;
+				Plane* pla = new Plane(nor, pos, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = pla;
+				scene.objs.push_back(_obj);
+			}
+			// Back wall
+			{
+				glm::vec3 nor(0.0f, 0.0f, 1.0f);
+				glm::vec3 pos(0.0f, 0.0f, -3.0f);
+				glm::vec3 scale(1.0f, 1.0f, 1.0f);
+				glm::vec4 rotation(0.0f, 0.0f, 0.0f, 0.0f);
+				glm::vec3 diffuse(1.0f, 1.0f, 1.0f);
+				glm::vec3 specular(0.0f, 0.0f, 0.0f);
+				glm::vec3 ambient(0.1f, 0.1f, 0.1f);
+				double exponent = 0.0;
+				Plane* pla = new Plane(nor, pos, scale, rotation, ambient, diffuse, specular, exponent);
+				SceneOBJ* _obj = pla;
+				scene.objs.push_back(_obj);
+			}
+			// Light 1
+			{
+				glm::vec3 pos(-1.0f, 2.0f, 1.0f);
+				float col = 0.5f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+			// Light 2
+			{
+				glm::vec3 pos(0.5f, -0.5f, 0.0f);
+				float col = 0.5f;
+				Light* lh = new Light(col, pos);
+				scene.lights.push_back(lh);
+			}
+		break;
 	}
 }
 
@@ -390,7 +482,7 @@ int main(int argc, char **argv)
 
 	// Checks valid scene
 	scene_no = atoi(argv[1]);
-	if(scene_no < 0 || scene_no > 8) {
+	if(scene_no < 0 || scene_no > 9) {
 		cout << "Invalid scene" << endl;
 		cout << "Expected 1-8" << endl;
 		cout << "Got: " << scene_no << endl;
@@ -440,30 +532,3 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-/*
- * objs not needed as of yet
-// Load geometry
-*/
-	/* debug ray hit section
-	 * remove later
-	{
-				glm::vec3 pos(0.0, 0.0, 0.0);
-				glm::vec3 scale(1.0, 1.0, 1.0);
-				glm::vec4 rotation(0.0, 0.0, 0.0, 0.0);
-				glm::vec3 diffuse(0.0, 0.0, 1.0);
-				glm::vec3 specular(1.0, 1.0, 0.5);
-				glm::vec3 ambient(0.1, 0.1, 0.1);
-				double exponent = 100.0;
-				Sphere sph(pos, 1.0f, scale, rotation, ambient, diffuse, specular, exponent);
-				glm::vec3 poss(0.0, 0.0, 5.0);
-				glm::vec3 dir(0.0, 0.0, -1.0);
-				Ray ra;
-				ra.origin = poss;
-				ra.direction = dir;
-				vector<Hit> hits = sph.intersection(ra);
-				for(int i = 0; i < hits.size(); i++) {
-					cout << hits[i].hit_normal.x << " " << hits[i].hit_normal.y << " " << hits[i].hit_normal.z << endl;
-					cout << hits[i].distance << endl;
-				}
-	}
-	*/

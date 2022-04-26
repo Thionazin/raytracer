@@ -20,6 +20,7 @@ public:
 	void applyViewMatrix(std::shared_ptr<MatrixStack> MV) const;
 	void debugTestRays();
 	void drawScene(Scene& scene, std::string output_name);
+	void drawAAScene(Scene& scene, std::string output_name);
 	
 private:
 	double aspect;

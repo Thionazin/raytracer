@@ -11,14 +11,6 @@ void Mesh::convertCoords(std::shared_ptr<MatrixStack>& MV) {
 	inverse_transform = glm::inverse(transformation);
 	inverse_transpose_transform = glm::transpose(inverse_transform);
 	center = MV->topMatrix() * glm::vec4(center, 1.0);
-	/*
-	for(size_t i = 0; i < posBuf.size(); i += 3) {
-		glm::vec3 new_coord = MV->topMatrix() * glm::vec4(posBuf[i], posBuf[i+1], posBuf[i+2], 1.0);
-		posBuf[i] = new_coord.x;
-		posBuf[i+1] = new_coord.y;
-		posBuf[i+2] = new_coord.z;
-	}
-	*/
 }
 
 std::vector<Hit> Mesh::intersection(Ray& input_ray) {
@@ -32,22 +24,6 @@ std::vector<Hit> Mesh::intersection(Ray& input_ray) {
 		return output;
 	}
 	// There is an intersection with this bounding sphere, proceed with rendering the bunny
-	/*
-	float t1 = (-b + std::sqrt(d))/(2.0f*a);
-	glm::vec3 x1 = (input_ray.origin + t1 * input_ray.direction);
-	glm::vec3 n1 = (x1 - center)/((float)radius);
-	n1 = glm::clamp(n1, glm::vec3(-1.0f), glm::vec3(1.0f));
-	if(!(t1 <= 0.0f)) {
-		output.emplace_back(t1, x1, n1);
-	}
-	float t2 = (-b - std::sqrt(d))/(2.0f*a);
-	glm::vec3 x2 = (input_ray.origin + t2 * input_ray.direction);
-	glm::vec3 n2 = (x2 - center)/((float)radius);
-	n2 = glm::clamp(n2, glm::vec3(-1.0f), glm::vec3(1.0f));
-	if(!(t2 <= 0.0f)) {
-		output.emplace_back(t2, x2, n2);
-	}
-	*/
 	Ray ra = input_ray;
 	ra.origin = inverse_transform * glm::vec4(ra.origin, 1.0f);
 	ra.direction = inverse_transform * glm::vec4(ra.direction, 0.0f);
