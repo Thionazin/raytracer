@@ -47,6 +47,10 @@ std::vector<Hit> Mesh::intersection(Ray& input_ray) {
 				glm::vec3 norm = glm::normalize(nor1 * (1.0f - bary.x - bary.y) + nor2 * bary.x + bary.y * nor3);
 				norm = inverse_transpose_transform * glm::vec4(norm, 0.0f);
 				norm = glm::normalize(norm);
+				float true_dist = glm::length(posi-input_ray.origin);
+				if(glm::dot(input_ray.direction, posi-input_ray.origin) < 0) {
+					true_dist = -true_dist;
+				}
 				closest = Hit(bary_dist, posi, norm);
 			}
 		}
