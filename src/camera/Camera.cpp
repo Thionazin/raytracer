@@ -161,11 +161,9 @@ void Camera::drawAAScene(Scene& scene, std::string output_name) {
 			}
 			if(closest_dist != DBL_MAX) {
 				glm::vec3 color = closest->doBPShading(closest_hit, new_ray, scene.lights, scene.objs, 0);
-				// image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
 				ss_row[c] = color;
 			} else {
 				ss_row[c] = glm::vec3(0.0f);
-				// image.setPixel(c, height-r-1, 0, 0, 0);
 			}
 		}
 		super_sample[r] = ss_row;
@@ -175,7 +173,7 @@ void Camera::drawAAScene(Scene& scene, std::string output_name) {
 	for(int r = 0; r < height; r++) {
 		for(int c = 0; c < width; c++) {
 			glm::vec3 color = 0.25f*super_sample[2*r][2*c] + 0.25f*super_sample[2*r+1][2*c] + 0.25f*super_sample[2*r][2*c+1] + 0.25f*super_sample[2*r+1][2*c+1];
-			//color = glm::clamp(color, 0.0f, 1.0f);
+			color = glm::clamp(color, 0.0f, 1.0f);
 			image.setPixel(c, height-r-1, 255*color.x, 255*color.y, 255*color.z);
 		}
 	}

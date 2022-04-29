@@ -3,7 +3,6 @@
 #include "Ellipsoid.h"
 
 void Ellipsoid::convertCoords(std::shared_ptr<MatrixStack>& MV) {
-	//center = (MV->topMatrix() * glm::vec4(center, 1.0));
 	// need to generate transformation matrixes instead
 	MV->translate(center);
 	MV->scale(scale);
