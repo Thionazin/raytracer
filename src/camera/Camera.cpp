@@ -57,6 +57,7 @@ void Camera::drawScene(Scene& scene, std::string output_name) {
 
 
 	// draw
+	#pragma omp parallel for
 	for(int r = 0; r < height; r++) {
 		for(int c = 0; c < width; c++) {
 			double pixelX = (2.0 * ((((double)c) + 0.5)/width) - 1.0) * aspect * std::tan(fovy/2);
@@ -122,6 +123,8 @@ void Camera::drawAAScene(Scene& scene, std::string output_name) {
 	int double_height = 2 * height;
 	int double_width = 2 * width;
 	std::vector<std::vector<glm::vec3>> super_sample(double_height);
+
+	#pragma omp parallel for
 	for(int r = 0; r < double_height; r++) {
 		std::vector<glm::vec3> ss_row(double_width);
 		for(int c = 0; c < double_width; c++) {
@@ -134,7 +137,6 @@ void Camera::drawAAScene(Scene& scene, std::string output_name) {
 			new_ray.origin = ray_origin;
 			new_ray.direction = ray_direction;
 			// assumes every scene has at least one object. Otherwise there wouldn't be any point would there
-
 			SceneOBJ* closest = scene.objs[0];
 			double closest_dist = DBL_MAX;
 			Hit closest_hit;
@@ -168,6 +170,8 @@ void Camera::drawAAScene(Scene& scene, std::string output_name) {
 		}
 		super_sample[r] = ss_row;
 	}
+
+	#pragma omp parallel for
 	for(int r = 0; r < height; r++) {
 		for(int c = 0; c < width; c++) {
 			glm::vec3 color = 0.25f*super_sample[2*r][2*c] + 0.25f*super_sample[2*r+1][2*c] + 0.25f*super_sample[2*r][2*c+1] + 0.25f*super_sample[2*r+1][2*c+1];

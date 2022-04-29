@@ -88,6 +88,8 @@ void populateOBJ(vector<float>& posBuf, vector<float>& norBuf, vector<float>& te
 }
 
 
+// Massive mess of a function
+// Needed for hard coded portion of assignment
 void generateScene(Scene& scene, int scene_no)
 {
 	switch(scene_no) {
@@ -358,7 +360,6 @@ void generateScene(Scene& scene, int scene_no)
 			}
 		break;
 		case 0:
-		case 9:
 			// Red Sphere
 			{
 				glm::vec3 pos(0.5f, -0.7f, 0.5f);
@@ -483,9 +484,9 @@ int main(int argc, char **argv)
 
 	// Checks valid scene
 	scene_no = atoi(argv[1]);
-	if(scene_no < 0 || scene_no > 9) {
+	if(scene_no < 0 || scene_no > 8) {
 		cout << "Invalid scene" << endl;
-		cout << "Expected 1-8" << endl;
+		cout << "Expected 0-8" << endl;
 		cout << "Got: " << scene_no << endl;
 		return 0;
 	}
@@ -511,20 +512,14 @@ int main(int argc, char **argv)
 
 	output_file = argv[3];
 
-
-
-
-
 	// initialize camera and populate rays
 	// TODO: generate camera dependant on scene. If scene 8, camera's fovy will be different.
 	// Although aspect will never change in the scope of this assignment, I added a field for it for later editing.
 	Camera cam(scene_size, scene_size, fovy, camera_pos, camera_rot);
-	
 
 	// initialize scene objects and populate objs
 	Scene scene;
 	generateScene(scene, scene_no);
-
 
 	// draw scene with camera
 	if(scene_no != 0) {
@@ -532,7 +527,6 @@ int main(int argc, char **argv)
 	} else {
 		cam.drawAAScene(scene, output_file);
 	}
-
 
 	return 0;
 }
